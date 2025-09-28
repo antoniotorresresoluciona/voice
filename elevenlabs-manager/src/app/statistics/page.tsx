@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getApiHeaders } from '../utils/api';
 
 interface Conversation {
   conversation_id: string;
@@ -19,7 +20,7 @@ export default function StatisticsPage() {
   useEffect(() => {
     async function fetchConversations() {
       try {
-        const response = await fetch('/api/conversations');
+        const response = await fetch('/api/conversations', { headers: getApiHeaders() });
         const data = await response.json();
         setConversations(data.conversations || []);
       } catch (err: any) {
@@ -34,7 +35,7 @@ export default function StatisticsPage() {
 
   const handleDownloadAudio = async (conversationId: string) => {
     try {
-      const response = await fetch(`/api/conversations/${conversationId}/audio`);
+      const response = await fetch(`/api/conversations/${conversationId}/audio`, { headers: getApiHeaders() });
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to download audio');

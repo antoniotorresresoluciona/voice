@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import ApiKeyManager from './ApiKeyManager';
 
 const navigation = [
   { name: 'Agents', href: '/' },
@@ -21,7 +22,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
         <div className="flex items-center">
           <h1 className="text-2xl font-semibold text-gray-900">
-            ElevenLabs Manager
+            Agent Manager
           </h1>
           <nav className="ml-10 flex space-x-8">
             {navigation.map((item) => (
@@ -40,6 +41,7 @@ export default function Header() {
             ))}
           </nav>
         </div>
+        <ApiKeyManager />
       </div>
     </header>
   );

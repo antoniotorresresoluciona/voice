@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import CreateAgentModal from './components/CreateAgentModal';
 import EditAgentModal from './components/EditAgentModal';
+import { getApiHeaders } from './utils/api';
 
 // Define the structure of an agent based on the API response
 interface Agent {
@@ -37,7 +38,7 @@ export default function Home() {
     setError(null);
     setShowApiKeyWarning(false);
     try {
-      const response = await fetch('/api/agents');
+      const response = await fetch('/api/agents', { headers: getApiHeaders() });
       if (!response.ok) {
         const errorData = await response.json();
         if (errorData.error === 'ElevenLabs API key not found') {
@@ -80,6 +81,7 @@ export default function Home() {
       try {
         const response = await fetch(`/api/agents/${agentId}`, {
           method: 'DELETE',
+          headers: getApiHeaders(),
         });
         if (!response.ok) {
           const errorData = await response.json();

@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
+import { getApiHeaders } from '@/app/utils/api';
 
 interface Message {
   text: string;
@@ -30,7 +31,7 @@ export default function AgentPage() {
     async function fetchAgentDetails() {
       if (!agentId) return;
       try {
-        const response = await fetch(`/api/agents/${agentId}`);
+        const response = await fetch(`/api/agents/${agentId}`, { headers: getApiHeaders() });
         if (!response.ok) {
           throw new Error('Failed to fetch agent details');
         }
@@ -62,7 +63,7 @@ export default function AgentPage() {
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getApiHeaders(),
         body: JSON.stringify({
           message: input,
           voiceId: agent.conversation_config.tts.voice_id,

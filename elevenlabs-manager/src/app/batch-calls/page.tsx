@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getApiHeaders } from '../utils/api';
 
 interface BatchCall {
   batch_call_id: string;
@@ -25,12 +26,12 @@ export default function BatchCallsPage() {
     async function fetchData() {
       try {
         // Fetch agents for the dropdown
-        const agentsResponse = await fetch('/api/agents');
+        const agentsResponse = await fetch('/api/agents', { headers: getApiHeaders() });
         const agentsData = await agentsResponse.json();
         setAgents(agentsData.agents || []);
 
         // Fetch existing batch calls
-        const batchCallsResponse = await fetch('/api/batch-calls');
+        const batchCallsResponse = await fetch('/api/batch-calls', { headers: getApiHeaders() });
         const batchCallsData = await batchCallsResponse.json();
         setBatchCalls(batchCallsData.batch_calls || []);
       } catch (err: any) {
@@ -54,7 +55,7 @@ export default function BatchCallsPage() {
     try {
       const response = await fetch('/api/batch-calls', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getApiHeaders(),
         body: JSON.stringify({
           agent_id: selectedAgent,
           csv_url: csvUrl,
@@ -68,7 +69,7 @@ export default function BatchCallsPage() {
       }
 
       // Refresh the list of batch calls
-      const batchCallsResponse = await fetch('/api/batch-calls');
+      const batchCallsResponse = await fetch('/api/batch-calls', { headers: getApiHeaders() });
       const batchCallsData = await batchCallsResponse.json();
       setBatchCalls(batchCallsData.batch_calls || []);
       setCsvUrl('');

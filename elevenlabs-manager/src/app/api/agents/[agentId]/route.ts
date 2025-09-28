@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 
+function getApiKey(request: Request): string | null {
+    return request.headers.get('X-Api-Key') || process.env.ELEVENLABS_API_KEY || null;
+}
+
 // GET a single agent
 export async function GET(request: Request, { params }: { params: { agentId: string } }) {
-  const apiKey = process.env.ELEVENLABS_API_KEY;
+  const apiKey = getApiKey(request);
   const { agentId } = params;
 
   if (!apiKey) {
@@ -28,7 +32,7 @@ export async function GET(request: Request, { params }: { params: { agentId: str
 
 // UPDATE an agent
 export async function PUT(request: Request, { params }: { params: { agentId: string } }) {
-  const apiKey = process.env.ELEVENLABS_API_KEY;
+  const apiKey = getApiKey(request);
   const { agentId } = params;
 
   if (!apiKey) {
@@ -59,7 +63,7 @@ export async function PUT(request: Request, { params }: { params: { agentId: str
 
 // DELETE an agent
 export async function DELETE(request: Request, { params }: { params: { agentId: string } }) {
-  const apiKey = process.env.ELEVENLABS_API_KEY;
+  const apiKey = getApiKey(request);
   const { agentId } = params;
 
   if (!apiKey) {
