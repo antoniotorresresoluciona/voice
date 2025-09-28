@@ -34,8 +34,12 @@ export default function BatchCallsPage() {
         const batchCallsResponse = await fetch('/api/batch-calls', { headers: getApiHeaders() });
         const batchCallsData = await batchCallsResponse.json();
         setBatchCalls(batchCallsData.batch_calls || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred while fetching data.');
+        }
       } finally {
         setLoading(false);
       }
@@ -74,8 +78,12 @@ export default function BatchCallsPage() {
       setBatchCalls(batchCallsData.batch_calls || []);
       setCsvUrl('');
 
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred while creating the batch call.');
+      }
     }
   };
 

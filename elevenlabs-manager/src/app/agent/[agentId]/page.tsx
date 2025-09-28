@@ -95,7 +95,7 @@ export default function AgentPage() {
         </h1>
         <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
             <p className="font-bold">Developer Note</p>
-            <p>This chat interface is a simulation. Due to environmental limitations preventing a live WebSocket connection, this feature does not connect to the agent's conversational logic. It demonstrates the text-to-speech and audio playback functionality by echoing your message.</p>
+            <p>This chat interface is a simulation. Due to environmental limitations preventing a live WebSocket connection, this feature does not connect to the agent&apos;s conversational logic. It demonstrates the text-to-speech and audio playback functionality by echoing your message.</p>
         </div>
         <div className="bg-white shadow overflow-hidden sm:rounded-md h-full flex flex-col">
           <div className="flex-grow p-4 space-y-4 overflow-y-auto">

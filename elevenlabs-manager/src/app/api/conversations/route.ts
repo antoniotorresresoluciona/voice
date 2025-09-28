@@ -25,6 +25,7 @@ export async function GET(request: Request) {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
+    console.error("Error in GET /api/conversations:", error);
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
   }
 }

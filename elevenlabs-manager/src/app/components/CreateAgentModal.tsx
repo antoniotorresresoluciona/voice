@@ -58,8 +58,12 @@ export default function CreateAgentModal({ isOpen, onClose, onAgentCreated }: Cr
 
       onAgentCreated();
       onClose();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     } finally {
       setIsCreating(false);
     }

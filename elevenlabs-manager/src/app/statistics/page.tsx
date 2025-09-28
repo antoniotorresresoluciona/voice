@@ -23,8 +23,12 @@ export default function StatisticsPage() {
         const response = await fetch('/api/conversations', { headers: getApiHeaders() });
         const data = await response.json();
         setConversations(data.conversations || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred while fetching conversations.');
+        }
       } finally {
         setLoading(false);
       }
@@ -49,8 +53,12 @@ export default function StatisticsPage() {
       a.click();
       window.URL.revokeObjectURL(url);
       a.remove();
-    } catch (err: any) {
-      alert(`Error downloading audio: ${err.message}`);
+    } catch (err) {
+      if (err instanceof Error) {
+        alert(`Error downloading audio: ${err.message}`);
+      } else {
+        alert('An unknown error occurred while downloading audio.');
+      }
     }
   };
 

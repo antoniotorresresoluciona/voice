@@ -48,9 +48,13 @@ export default function Home() {
       }
       const data = await response.json();
       setAgents(data.agents || []);
-    } catch (err: any) {
+    } catch (err) {
       if (!showApiKeyWarning) {
-        setError(err.message);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred');
+        }
       }
     } finally {
       setLoading(false);
@@ -88,8 +92,12 @@ export default function Home() {
           throw new Error(errorData.error || 'Failed to delete agent');
         }
         fetchAgents();
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred');
+        }
       }
     }
   };
