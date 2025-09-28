@@ -169,7 +169,6 @@ export default function Home() {
               ))}
             </ul>
           </div>
-        </div>
       </main>
     </div>
   );
