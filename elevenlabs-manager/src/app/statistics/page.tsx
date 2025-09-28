@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getApiHeaders } from '../utils/api';
 
 interface Conversation {
   conversation_id: string;
@@ -19,11 +20,15 @@ export default function StatisticsPage() {
   useEffect(() => {
     async function fetchConversations() {
       try {
-        const response = await fetch('/api/conversations');
+        const response = await fetch('/api/conversations', { headers: getApiHeaders() });
         const data = await response.json();
         setConversations(data.conversations || []);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred while fetching conversations.');
+        }
       } finally {
         setLoading(false);
       }
@@ -34,7 +39,7 @@ export default function StatisticsPage() {
 
   const handleDownloadAudio = async (conversationId: string) => {
     try {
-      const response = await fetch(`/api/conversations/${conversationId}/audio`);
+      const response = await fetch(`/api/conversations/${conversationId}/audio`, { headers: getApiHeaders() });
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to download audio');
@@ -48,8 +53,12 @@ export default function StatisticsPage() {
       a.click();
       window.URL.revokeObjectURL(url);
       a.remove();
-    } catch (err: any) {
-      alert(`Error downloading audio: ${err.message}`);
+    } catch (err) {
+      if (err instanceof Error) {
+        alert(`Error downloading audio: ${err.message}`);
+      } else {
+        alert('An unknown error occurred while downloading audio.');
+      }
     }
   };
 

@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import CreateAgentModal from './components/CreateAgentModal';
 import EditAgentModal from './components/EditAgentModal';
+import { getApiHeaders } from './utils/api';
 
 // Define the structure of an agent based on the API response
 interface Agent {
@@ -37,7 +38,7 @@ export default function Home() {
     setError(null);
     setShowApiKeyWarning(false);
     try {
-      const response = await fetch('/api/agents');
+      const response = await fetch('/api/agents', { headers: getApiHeaders() });
       if (!response.ok) {
         const errorData = await response.json();
         if (errorData.error === 'ElevenLabs API key not found') {
@@ -47,9 +48,13 @@ export default function Home() {
       }
       const data = await response.json();
       setAgents(data.agents || []);
-    } catch (err: any) {
+    } catch (err) {
       if (!showApiKeyWarning) {
-        setError(err.message);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred');
+        }
       }
     } finally {
       setLoading(false);
@@ -80,14 +85,19 @@ export default function Home() {
       try {
         const response = await fetch(`/api/agents/${agentId}`, {
           method: 'DELETE',
+          headers: getApiHeaders(),
         });
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || 'Failed to delete agent');
         }
         fetchAgents();
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred');
+        }
       }
     }
   };
@@ -113,62 +123,62 @@ export default function Home() {
           </div>
         )}
         <div className="flex justify-end mb-4">
-            <button
-              onClick={() => setCreateModalOpen(true)}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Create Agent
-            </button>
+          <button
+            onClick={() => setCreateModalOpen(true)}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Create Agent
+          </button>
         </div>
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <ul role="list" className="divide-y divide-gray-200">
-              {loading && <li className="p-4">Loading agents...</li>}
-              {error && <li className="p-4 text-red-500">Error: {error}</li>}
-              {!loading && !error && !showApiKeyWarning && agents.length === 0 && (
-                <li className="p-4">No agents found.</li>
-              )}
-              {!loading && !error && !showApiKeyWarning && agents.map((agent) => (
-                <li key={agent.agent_id}>
-                  <div className="px-4 py-4 sm:px-6">
-                    <div className="flex items-center justify-between">
-                      <p className="text-md font-medium text-blue-700 truncate">
-                        {agent.name}
+          <ul role="list" className="divide-y divide-gray-200">
+            {loading && <li className="p-4">Loading agents...</li>}
+            {error && <li className="p-4 text-red-500">Error: {error}</li>}
+            {!loading && !error && !showApiKeyWarning && agents.length === 0 && (
+              <li className="p-4">No agents found.</li>
+            )}
+            {!loading && !error && !showApiKeyWarning && agents.map((agent) => (
+              <li key={agent.agent_id}>
+                <div className="px-4 py-4 sm:px-6">
+                  <div className="flex items-center justify-between">
+                    <p className="text-md font-medium text-blue-700 truncate">
+                      {agent.name}
+                    </p>
+                    <div className="ml-2 flex-shrink-0 flex items-center space-x-4">
+                      <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        {agent.access_info.role}
                       </p>
-                      <div className="ml-2 flex-shrink-0 flex items-center space-x-4">
-                        <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                          {agent.access_info.role}
-                        </p>
-                        <button
-                          onClick={() => handleEditClick(agent)}
-                          className="text-sm font-medium text-yellow-600 hover:text-yellow-500"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteClick(agent.agent_id)}
-                          className="text-sm font-medium text-red-600 hover:text-red-500"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                    <div className="mt-2 sm:flex sm:justify-between">
-                      <div className="sm:flex">
-                        <p className="flex items-center text-sm text-gray-500">
-                          ID: {agent.agent_id}
-                        </p>
-                      </div>
-                      <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                        <p>
-                          Created by {agent.access_info.creator_name}
-                        </p>
-                      </div>
+                      <button
+                        onClick={() => handleEditClick(agent)}
+                        className="text-sm font-medium text-yellow-600 hover:text-yellow-500"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(agent.agent_id)}
+                        className="text-sm font-medium text-red-600 hover:text-red-500"
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+                  <div className="mt-2 sm:flex sm:justify-between">
+                    <div className="sm:flex">
+                      <p className="flex items-center text-sm text-gray-500">
+                        ID: {agent.agent_id}
+                      </p>
+                    </div>
+                    <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                      <p>
+                        Created by {agent.access_info.creator_name}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </main>
     </div>
   );

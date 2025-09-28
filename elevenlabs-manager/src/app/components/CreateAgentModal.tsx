@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getApiHeaders } from '../utils/api';
 
 interface CreateAgentModalProps {
   isOpen: boolean;
@@ -46,7 +47,7 @@ export default function CreateAgentModal({ isOpen, onClose, onAgentCreated }: Cr
     try {
       const response = await fetch('/api/agents', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getApiHeaders(),
         body: JSON.stringify(agentConfig),
       });
 
@@ -57,8 +58,12 @@ export default function CreateAgentModal({ isOpen, onClose, onAgentCreated }: Cr
 
       onAgentCreated();
       onClose();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     } finally {
       setIsCreating(false);
     }

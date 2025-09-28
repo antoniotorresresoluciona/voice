@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 
+function getApiKey(request: Request): string | null {
+    return request.headers.get('X-Api-Key') || process.env.ELEVENLABS_API_KEY || null;
+}
+
 export async function GET(request: Request, { params }: { params: { conversationId: string } }) {
-  const apiKey = process.env.ELEVENLABS_API_KEY;
+  const apiKey = getApiKey(request);
   const { conversationId } = params;
 
   if (!apiKey) {

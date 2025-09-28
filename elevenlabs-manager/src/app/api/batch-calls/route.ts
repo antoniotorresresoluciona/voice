@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 
+function getApiKey(request: Request): string | null {
+    return request.headers.get('X-Api-Key') || process.env.ELEVENLABS_API_KEY || null;
+}
+
 // GET all batch calls
-export async function GET() {
-  const apiKey = process.env.ELEVENLABS_API_KEY;
+export async function GET(request: Request) {
+  const apiKey = getApiKey(request);
 
   if (!apiKey) {
     return NextResponse.json({ error: 'ElevenLabs API key not found' }, { status: 500 });
@@ -21,13 +25,14 @@ export async function GET() {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
+    console.error("Error in GET /api/batch-calls:", error);
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
   }
 }
 
 // CREATE a new batch call
 export async function POST(request: Request) {
-  const apiKey = process.env.ELEVENLABS_API_KEY;
+  const apiKey = getApiKey(request);
 
   if (!apiKey) {
     return NextResponse.json({ error: 'ElevenLabs API key not found' }, { status: 500 });
@@ -52,6 +57,7 @@ export async function POST(request: Request) {
     const data = await response.json();
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
+    console.error("Error in POST /api/batch-calls:", error);
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
   }
 }

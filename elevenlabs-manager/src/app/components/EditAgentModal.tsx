@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { getApiHeaders } from '../utils/api';
 
 interface Agent {
   agent_id: string;
@@ -54,7 +55,7 @@ export default function EditAgentModal({ isOpen, onClose, onAgentUpdated, agent 
     try {
       const response = await fetch(`/api/agents/${agent.agent_id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getApiHeaders(),
         body: JSON.stringify(updatedConfig),
       });
 
@@ -65,8 +66,12 @@ export default function EditAgentModal({ isOpen, onClose, onAgentUpdated, agent 
 
       onAgentUpdated();
       onClose();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     } finally {
       setIsUpdating(false);
     }
